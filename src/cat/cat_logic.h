@@ -5,5 +5,6 @@
 
 void process_file(const char *filename, CatFlags flags);
 void print_char(int ch, CatFlags flags);
+void print_line_number(int ch, CatFlags flags, int *line_number);
 
 #endif

@@ -2,6 +2,18 @@
 
 #include <stdio.h>
 
+void print_line_number(int ch, CatFlags flags, int* line_number) {
+  if (flags.b) {
+    if (ch != '\n') {
+      printf("%6d\t", *line_number);
+      (*line_number)++;
+    }
+  } else if (flags.n) {
+    printf("%6d\t", *line_number);
+    (*line_number)++;
+  }
+}
+
 void print_char(int ch, CatFlags flags) {
   if (flags.v) {
     if (ch != '\n' && ch != '\t' && ch < 32) {
@@ -16,18 +28,18 @@ void print_char(int ch, CatFlags flags) {
         if ((flags.e || flags.E) && ch == '\n') {
           putchar('$');
         }
-
         putchar(ch);
       }
     }
   } else {
     if ((flags.t || flags.T) && ch == '\t') {
       printf("^I");
+    } else if (flags.E && ch == '\r') {
+      printf("^M");
     } else {
       if ((flags.e || flags.E) && ch == '\n') {
         putchar('$');
       }
-
       putchar(ch);
     }
   }
@@ -43,18 +55,6 @@ void process_file(const char* filename, CatFlags flags) {
     int empty_lines = 0;
 
     while ((ch = fgetc(fp)) != EOF) {
-      if (start_line) {
-        if (flags.b) {
-          if (ch != '\n') {
-            printf("%6d\t", line_number);
-            line_number++;
-          }
-        } else if (flags.n) {
-          printf("%6d\t", line_number);
-          line_number++;
-        }
-      }
-
       int should_print = 1;
 
       if (flags.s) {
@@ -70,13 +70,16 @@ void process_file(const char* filename, CatFlags flags) {
       }
 
       if (should_print) {
-        print_char(ch, flags);
-      }
+        if (start_line) {
+          print_line_number(ch, flags, &line_number);
+          start_line = 0;
+        }
 
-      if (ch == '\n') {
-        start_line = 1;
-      } else {
-        start_line = 0;
+        print_char(ch, flags);
+
+        if (ch == '\n') {
+          start_line = 1;
+        }
       }
     }
 

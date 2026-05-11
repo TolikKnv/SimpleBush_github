@@ -3,6 +3,6 @@
 
 #include "s21_cat.h"
 
-void parse_flags(int argc, char *argv[], CatFlags *flags);
+int parse_flags(int argc, char *argv[], CatFlags *flags);
 
 #endif

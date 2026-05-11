@@ -9,10 +9,10 @@
 int main(int argc, char *argv[]) {
   CatFlags flags = {0};
 
-  parse_flags(argc, argv, &flags);
-
-  for (int i = optind; i < argc; i++) {
-    process_file(argv[i], flags);
+  if (parse_flags(argc, argv, &flags) == 0) {
+    for (int i = optind; i < argc; i++) {
+      process_file(argv[i], flags);
+    }
   }
 
   return 0;
